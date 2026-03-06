@@ -1,92 +1,39 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-  <title>FITLOG</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0d0e10">
-  <meta name="mobile-web-app-capable" content="yes">
-
-  <!-- iOS -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FITLOG">
-  <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2025/03/CA.png">
-
+  <title>Cronograma</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2025/03/CA.png">
-
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body {
-      height: 100%; width: 100%;
-      margin: 0; padding: 0;
-      background: #0d0e10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, -apple-system, sans-serif;
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
 
-    .logo {
-      font-size: 48px; font-weight: 900;
-      letter-spacing: -1px; text-transform: uppercase;
-      color: #f0f0f0; margin-bottom: 28px;
+    body, html {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
     }
-    .logo span { color: #c8f000; }
 
-    .spinner {
-      width: 32px; height: 32px;
-      border: 3px solid rgba(200,240,0,0.15);
-      border-top-color: #c8f000;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Botão de fallback caso o redirect demore */
-    .open-btn {
-      display: none;
-      margin-top: 32px;
-      padding: 14px 28px;
-      background: #c8f000; color: #0d0e10;
-      border: none; border-radius: 12px;
-      font-size: 16px; font-weight: 800;
-      letter-spacing: 0.5px; text-transform: uppercase;
-      cursor: pointer; text-decoration: none;
+    iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
     }
   </style>
 </head>
 <body>
-
-  <div class="logo">FIT<span>LOG</span></div>
-  <div class="spinner" id="spinner"></div>
-  <a class="open-btn" id="open-btn"
-     href="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec">
-    Abrir Treino
-  </a>
-
-  <script>
-    var APP_URL = 'https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec';
-
-    // Registra Service Worker (necessário para instalar como app real no Android)
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function(){});
-    }
-
-    // Redireciona para o Apps Script — sem iframe, direto
-    // Como o PWA usa display:standalone, a barra de URL não aparece mesmo após o redirect
-    window.location.replace(APP_URL);
-
-    // Fallback: se o redirect não acontecer em 3s, mostra o botão manualmente
-    setTimeout(function() {
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('open-btn').style.display = 'inline-block';
-    }, 3000);
-  </script>
+  <iframe 
+    src="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" 
+    frameborder="0"
+    allowfullscreen
+    allow="clipboard-read; clipboard-write"
+  ></iframe>
 </body>
 </html>
