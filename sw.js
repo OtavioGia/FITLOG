@@ -1,4 +1,5 @@
-// Service Worker — FITLOG PWA
+// Service Worker — FITLOG
+// Necessário para o Chrome reconhecer como PWA instalável
 var CACHE = 'fitlog-v1';
 
 self.addEventListener('install', function(e) {
@@ -14,7 +15,8 @@ self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(k){ return k !== CACHE; }).map(function(k){ return caches.delete(k); })
+        keys.filter(function(k) { return k !== CACHE; })
+            .map(function(k)   { return caches.delete(k); })
       );
     })
   );
@@ -22,9 +24,8 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
-  var url = new URL(e.request.url);
-  // Não intercepta o iframe do Apps Script — deixa passar direto
-  if (url.origin !== self.location.origin) return;
+  // Só trata requests da própria origem do GitHub Pages
+  if (!e.request.url.startsWith(self.location.origin)) return;
 
   e.respondWith(
     fetch(e.request).catch(function() {
