@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <title>FITLOG</title>
 
@@ -17,41 +17,30 @@
   <meta name="apple-mobile-web-app-title" content="FITLOG">
   <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2025/03/CA.png">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2025/03/CA.png">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-
     html, body {
       height: 100%; width: 100%;
       margin: 0; padding: 0;
-      overflow: hidden;
       background: #0d0e10;
-    }
-
-    /* Splash enquanto o iframe carrega */
-    #splash {
-      position: fixed; inset: 0;
-      background: #0d0e10;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 24px;
-      z-index: 10;
-      transition: opacity 0.4s ease;
-    }
-    #splash.hidden { opacity: 0; pointer-events: none; }
-
-    .splash-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       font-family: system-ui, -apple-system, sans-serif;
-      font-size: 44px; font-weight: 900;
-      letter-spacing: -1px; text-transform: uppercase;
-      color: #f0f0f0;
     }
-    .splash-logo span { color: #c8f000; }
 
-    .splash-spinner {
-      width: 30px; height: 30px;
+    .logo {
+      font-size: 48px; font-weight: 900;
+      letter-spacing: -1px; text-transform: uppercase;
+      color: #f0f0f0; margin-bottom: 28px;
+    }
+    .logo span { color: #c8f000; }
+
+    .spinner {
+      width: 32px; height: 32px;
       border: 3px solid rgba(200,240,0,0.15);
       border-top-color: #c8f000;
       border-radius: 50%;
@@ -59,47 +48,45 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    iframe {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: none;
+    /* Botão de fallback caso o redirect demore */
+    .open-btn {
+      display: none;
+      margin-top: 32px;
+      padding: 14px 28px;
+      background: #c8f000; color: #0d0e10;
+      border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 800;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
     }
   </style>
 </head>
 <body>
 
-  <div id="splash">
-    <div class="splash-logo">FIT<span>LOG</span></div>
-    <div class="splash-spinner"></div>
-  </div>
-
-  <iframe
-    id="app"
-    src="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec"
-    allowfullscreen
-    allow="clipboard-read; clipboard-write">
-  </iframe>
+  <div class="logo">FIT<span>LOG</span></div>
+  <div class="spinner" id="spinner"></div>
+  <a class="open-btn" id="open-btn"
+     href="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec">
+    Abrir Treino
+  </a>
 
   <script>
-    // Registra o Service Worker — obrigatório para instalar como app no Android
+    var APP_URL = 'https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec';
+
+    // Registra Service Worker (necessário para instalar como app real no Android)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(function(){});
     }
 
-    // Remove splash quando o iframe carregar
-    document.getElementById('app').addEventListener('load', function() {
-      setTimeout(function() {
-        var s = document.getElementById('splash');
-        s.classList.add('hidden');
-        setTimeout(function(){ s.style.display = 'none'; }, 450);
-      }, 300);
-    });
+    // Redireciona para o Apps Script — sem iframe, direto
+    // Como o PWA usa display:standalone, a barra de URL não aparece mesmo após o redirect
+    window.location.replace(APP_URL);
 
-    // Fallback: remove splash após 7s de qualquer forma
+    // Fallback: se o redirect não acontecer em 3s, mostra o botão manualmente
     setTimeout(function() {
-      document.getElementById('splash').classList.add('hidden');
-    }, 7000);
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('open-btn').style.display = 'inline-block';
+    }, 3000);
   </script>
 </body>
 </html>
