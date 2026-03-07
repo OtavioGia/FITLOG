@@ -1,9 +1,9 @@
-const CACHE_NAME = 'fitlog-v1';
+const CACHE_NAME = 'fitlog-v2';
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(['/']);
+      return cache.addAll(['/FITLOG/']);
     })
   );
   self.skipWaiting();

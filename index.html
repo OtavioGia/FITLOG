@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="FITLOG">
   <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
   <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/FITLOG/manifest.json">
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -44,7 +44,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
           .then(function(reg) {
             console.log('Service Worker registrado:', reg.scope);
           })
