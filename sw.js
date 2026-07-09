@@ -1,5 +1,5 @@
-const CACHE_NAME = 'fitlog-v3';
-const URLS_TO_CACHE = [
+const CACHE_NAME = 'fitlog-v4';
+const ASSETS = [
   '/FITLOG/',
   '/FITLOG/index.html',
   '/FITLOG/manifest.json'
@@ -8,7 +8,7 @@ const URLS_TO_CACHE = [
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(URLS_TO_CACHE);
+      return cache.addAll(ASSETS);
     })
   );
   self.skipWaiting();
@@ -30,12 +30,11 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  // Deixa requisições do Google Apps Script passarem direto pela internet
+  // Ignora requisições para o Google Apps Script (deixa passar direto na internet)
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
-
-  // Tenta buscar na rede, se falhar ou estiver offline, pega do cache
+  
   event.respondWith(
     fetch(event.request).catch(function() {
       return caches.match(event.request);
