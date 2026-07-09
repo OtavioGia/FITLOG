@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
   <title>FITLOG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#000000">
@@ -8,370 +9,142 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FITLOG">
+  
   <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
   <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/FITLOG/manifest.json">
+  
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    
+    * { box-sizing: border-box; }
     body, html {
       height: 100%;
       width: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      background: #000000;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    
-    #app-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1;
-    }
-    
-    /* Tela de loading com logo */
-    #splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000000;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
-      transition: opacity 0.5s ease-out;
+      text-align: center;
     }
-    
-    #splash-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
+    .logo {
+      width: 180px;
+      height: 180px;
+      border-radius: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(255,255,255,0.1);
     }
-    
-    .splash-logo {
-      width: 150px;
-      height: 150px;
-      margin-bottom: 30px;
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+    p {
+      color: #aaaaaa;
+      margin-bottom: 40px;
+    }
+    .btn {
+      background-color: #ff3b30; /* Cor de destaque (pode mudar se quiser) */
+      color: white;
+      text-decoration: none;
+      padding: 16px 32px;
       border-radius: 30px;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    .splash-title {
-      color: white;
-      font-size: 42px;
-      font-weight: 800;
-      letter-spacing: 5px;
-      margin-bottom: 20px;
-    }
-    
-    .splash-loader {
-      width: 200px;
-      height: 3px;
-      background: #333;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-    
-    .splash-loader-bar {
-      width: 30%;
-      height: 100%;
-      background: linear-gradient(90deg, #fff, #ccc, #fff);
-      background-size: 200% 100%;
-      animation: loadingBar 2s linear infinite;
-      border-radius: 3px;
-    }
-    
-    @keyframes loadingBar {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(400%); }
-    }
-    
-    /* Botão de instalação flutuante */
-    #install-prompt {
-      display: none;
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #000000;
-      color: white;
-      padding: 15px 30px;
-      border-radius: 50px;
-      z-index: 999;
-      box-shadow: 0 8px 25px rgba(255,255,255,0.2);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      text-align: center;
-      cursor: pointer;
-      border: 2px solid #ffffff;
+      font-size: 18px;
       font-weight: bold;
-      font-size: 16px;
-      letter-spacing: 1px;
-      animation: slideUp 0.3s ease-out;
-      backdrop-filter: blur(10px);
-    }
-    
-    @keyframes slideUp {
-      from { transform: translateX(-50%) translateY(100px); opacity: 0; }
-      to { transform: translateX(-50%) translateY(0); opacity: 1; }
-    }
-    
-    #install-prompt:hover {
-      background: #1a1a1a;
-      transform: translateX(-50%) scale(1.05);
-    }
-    
-    #install-prompt:active {
-      transform: translateX(-50%) scale(0.95);
-    }
-    
-    /* Overlay de redirecionamento */
-    #redirect-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.95);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-    
-    #redirect-overlay.active {
-      display: flex;
-    }
-    
-    .redirect-message {
-      color: white;
-      font-size: 16px;
-      text-align: center;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    
-    .redirect-logo {
-      width: 100px;
-      height: 100px;
-      margin-bottom: 20px;
-      border-radius: 20px;
-    }
-    
-    .redirect-button {
-      background: white;
-      color: black;
       border: none;
-      padding: 15px 40px;
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 16px;
-      margin-top: 20px;
       cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      width: 80%;
+      max-width: 300px;
+      margin-bottom: 15px;
+      transition: transform 0.2s;
     }
-    
-    .redirect-button:active {
-      background: #ccc;
+    .btn:active {
+      transform: scale(0.95);
+    }
+    .btn-install {
+      background-color: #007aff; /* Azul para botão de instalar */
+      display: none; /* Fica oculto até o navegador permitir a instalação */
+    }
+    .ios-instruction {
+      display: none;
+      font-size: 14px;
+      color: #888;
+      width: 80%;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- Splash Screen com Logo Original -->
-  <div id="splash-screen">
-    <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" 
-         alt="FITLOG" 
-         class="splash-logo">
-    <div class="splash-title">FITLOG</div>
-    <div class="splash-loader">
-      <div class="splash-loader-bar"></div>
-    </div>
-  </div>
 
-  <!-- Overlay de redirecionamento -->
-  <div id="redirect-overlay">
-    <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" 
-         alt="FITLOG" 
-         class="redirect-logo">
-    <div class="redirect-message">
-      <strong style="font-size: 24px; display: block; margin-bottom: 10px;">FITLOG</strong>
-      Seu aplicativo está abrindo...
-    </div>
-    <button class="redirect-button" onclick="openApp()">
-      ABRIR AGORA
-    </button>
-  </div>
+  <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" alt="FITLOG Logo" class="logo">
+  <h1>FITLOG</h1>
+  <p>Seu app de treino</p>
 
-  <!-- Container principal -->
-  <div id="app-container">
-    <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" 
-         alt="FITLOG" 
-         style="width: 150px; height: 150px; border-radius: 30px; margin-bottom: 30px;"
-         id="main-logo">
-  </div>
+  <!-- Botão que redireciona para o Google Apps Script -->
+  <a href="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" class="btn">Entrar no App</a>
 
-  <!-- Botão de instalação -->
-  <div id="install-prompt" onclick="installApp()">
-    📲 INSTALAR APP FITLOG
+  <!-- Botão de Instalação (aparece no Android/Chrome) -->
+  <button id="installBtn" class="btn btn-install">Instalar Aplicativo</button>
+
+  <!-- Instrução para iOS -->
+  <div id="iosInstruction" class="ios-instruction">
+    Para instalar no iPhone, toque em <b>Compartilhar</b> <svg width="15" height="15" viewBox="0 0 50 50" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M25 2L12 15h9v15h8V15h9L25 2zM12 35v8h26v-8h4v12H8V35h4z"/></svg> e depois em <b>"Adicionar à Tela de Início"</b>.
   </div>
 
   <script>
-    let deferredPrompt;
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec';
-    
-    // Detecta se está em modo standalone (app instalado)
-    const isStandalone = () => {
-      return window.matchMedia('(display-mode: standalone)').matches || 
-             window.navigator.standalone || 
-             document.referrer.includes('android-app://');
-    };
-
-    // Função para abrir o app
-    function openApp() {
-      const overlay = document.getElementById('redirect-overlay');
-      overlay.classList.add('active');
-      
-      // Método 1: Tenta redirecionamento direto (funciona em standalone)
-      if (isStandalone()) {
-        window.location.href = GOOGLE_SCRIPT_URL;
-        return;
-      }
-      
-      // Método 2: Abre em nova janela otimizada
-      const width = screen.width;
-      const height = screen.height;
-      const left = 0;
-      const top = 0;
-      
-      const newWindow = window.open(
-        GOOGLE_SCRIPT_URL,
-        'FITLOG_APP',
-        `width=${width},height=${height},left=${left},top=${top},` +
-        'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,' +
-        'resizable=yes,fullscreen=yes'
-      );
-      
-      // Se o popup foi bloqueado
-      if (!newWindow || newWindow.closed) {
-        document.querySelector('.redirect-message').innerHTML = 
-          '<strong style="font-size: 24px; display: block; margin-bottom: 10px;">FITLOG</strong>' +
-          'Pop-up bloqueado!<br>Clique no botão abaixo para abrir';
-      } else {
-        // Fecha o overlay quando a janela abrir
-        setTimeout(() => {
-          overlay.classList.remove('active');
-          document.getElementById('splash-screen').classList.add('hidden');
-        }, 1000);
-      }
-    }
-
-    // Gerencia instalação do PWA
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      
-      // Mostra botão de instalação após 2 segundos
-      setTimeout(() => {
-        if (!isStandalone()) {
-          document.getElementById('install-prompt').style.display = 'block';
-        }
-      }, 2000);
-    });
-
-    function installApp() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('App instalado!');
-            document.getElementById('install-prompt').style.display = 'none';
-            // Recarrega para abrir em modo standalone
-            setTimeout(() => location.reload(), 500);
-          }
-          deferredPrompt = null;
-        });
-      } else {
-        // Instruções manuais
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isAndroid = /Android/.test(navigator.userAgent);
-        
-        if (isIOS) {
-          alert('📲 Para instalar no iPhone/iPad:\n\n' +
-                '1. Toque no ícone "Compartilhar" (⬆️)\n' +
-                '2. Role e toque em "Adicionar à Tela de Início"\n' +
-                '3. Toque em "Adicionar"');
-        } else if (isAndroid) {
-          alert('📲 Para instalar no Android:\n\n' +
-                '1. Toque nos 3 pontinhos (⋮) do navegador\n' +
-                '2. Toque em "Adicionar à tela inicial"\n' +
-                '3. Confirme a instalação');
-        } else {
-          alert('📲 Para instalar:\n\n' +
-                'Use o menu do navegador e selecione "Instalar aplicativo" ou "Adicionar à tela inicial"');
-        }
-      }
-    }
-
-    // Inicialização
-    window.addEventListener('load', () => {
-      const splash = document.getElementById('splash-screen');
-      const installPrompt = document.getElementById('install-prompt');
-      
-      // Se estiver em modo standalone, abre o app automaticamente
-      if (isStandalone()) {
-        installPrompt.style.display = 'none';
-        // Pequeno delay para mostrar o logo e depois abrir
-        setTimeout(() => {
-          openApp();
-          splash.classList.add('hidden');
-        }, 1500);
-      } else {
-        // Modo navegador: mostra splash e depois oferece instalação
-        setTimeout(() => {
-          splash.classList.add('hidden');
-          // Oferece para abrir o app após o splash
-          openApp();
-        }, 2000);
-      }
-    });
-
-    // Evento quando app é instalado
-    window.addEventListener('appinstalled', () => {
-      document.getElementById('install-prompt').style.display = 'none';
-      console.log('✅ FITLOG instalado com sucesso!');
-    });
-
-    // Registra Service Worker
+    // 1. Registro do Service Worker
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js', { scope: './' })
-          .then(reg => {
-            console.log('✅ Service Worker registrado:', reg.scope);
-          })
-          .catch(err => {
-            console.log('❌ Erro Service Worker:', err);
-          });
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
+          .then(function(reg) { console.log('SW registrado!', reg.scope); })
+          .catch(function(err) { console.log('Erro no SW:', err); });
       });
     }
+
+    // 2. Lógica do Botão de Instalação (PWA)
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    const iosInstruction = document.getElementById('iosInstruction');
+
+    // Detecta se é iOS (iPhone/iPad) para mostrar instrução em texto, pois a Apple não suporta o botão.
+    const isIos = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(userAgent);
+    };
+    
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    if (isIos() && !isInStandaloneMode()) {
+      iosInstruction.style.display = 'block';
+    }
+
+    // Captura o evento do Chrome/Android que permite instalação
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); // Impede o prompt automático de aparecer na hora
+      deferredPrompt = e; // Guarda o evento
+      installBtn.style.display = 'block'; // Mostra o botão "Instalar Aplicativo"
+    });
+
+    // Quando o usuário clica no botão "Instalar Aplicativo"
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt !== null) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('Usuário aceitou a instalação');
+          installBtn.style.display = 'none'; // Esconde o botão após instalar
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    // Esconde o botão se o app já foi instalado com sucesso
+    window.addEventListener('appinstalled', () => {
+      installBtn.style.display = 'none';
+    });
   </script>
 </body>
 </html>
