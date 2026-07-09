@@ -13,99 +13,166 @@
   <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
   <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
   <link rel="manifest" href="/FITLOG/manifest.json">
-  
+
   <style>
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     body, html {
       height: 100%;
       width: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
       background-color: #000000;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
-    /* O Iframe ocupa toda a tela, dando a cara de App nativo */
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .container {
+      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
       width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      z-index: 1;
+      max-width: 400px;
     }
-    /* Botão flutuante de instalação */
-    #installBtn {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #007aff;
+    .logo {
+      width: 180px;
+      height: auto;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+      animation: fadeInDown 1s ease;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      animation: fadeIn 1.5s ease;
+    }
+    .btn-open {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Verde fit moderno */
       color: white;
       border: none;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-size: 16px;
+      padding: 18px 40px;
+      font-size: 18px;
       font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      z-index: 9999; /* Fica por cima do iframe */
+      border-radius: 30px;
       cursor: pointer;
-      display: none; /* Escondido por padrão */
+      width: 90%;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      animation: fadeInUp 1s ease;
     }
+    .btn-open:active {
+      transform: scale(0.95);
+    }
+    .btn-install {
+      background-color: transparent;
+      color: #aaaaaa;
+      border: 1px solid #555555;
+      padding: 12px 30px;
+      font-size: 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: none; /* Fica oculto até o navegador permitir instalação */
+      transition: all 0.3s;
+    }
+    .btn-install:active {
+      background-color: #333333;
+    }
+    .ios-instruction {
+      display: none;
+      font-size: 12px;
+      color: #888;
+      margin-top: 10px;
+      padding: 0 20px;
+    }
+
+    /* Animações */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
 
-  <!-- Seu App rodando em tela cheia -->
-  <iframe 
-    src="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" 
-    allowfullscreen
-    allow="clipboard-read; clipboard-write">
-  </iframe>
+  <div class="container">
+    <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" alt="FITLOG Logo" class="logo">
+    <div class="title">FITLOG</div>
+    
+    <!-- Botão que leva para o Google Script -->
+    <button class="btn-open" onclick="abrirApp()">ACESSAR TREINO</button>
 
-  <!-- Botão de Instalar App (Flutuante) -->
-  <button id="installBtn">📲 Instalar App FITLOG</button>
+    <!-- Botão de instalação para Android/Chrome -->
+    <button class="btn-install" id="btn-install">Baixar Aplicativo</button>
+    
+    <!-- Instrução para usuários de iPhone (Safari) -->
+    <div class="ios-instruction" id="ios-instruction">
+      Para instalar no iPhone: Toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.
+    </div>
+  </div>
 
   <script>
-    // 1. Registra o Service Worker (necessário para virar App)
+    // Link do seu Google Apps Script
+    const APP_URL = "https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec";
+
+    function abrirApp() {
+      // Redireciona na mesma aba. Se o usuário estiver no PWA instalado, continuará parecendo um app.
+      window.location.href = APP_URL;
+    }
+
+    // === LÓGICA DO SERVICE WORKER (PWA) ===
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
-          .then(function(reg) { console.log('SW registrado com sucesso!'); })
-          .catch(function(err) { console.log('Erro no SW:', err); });
+          .then(reg => console.log('Service Worker registrado:', reg.scope))
+          .catch(err => console.log('Erro ao registrar SW:', err));
       });
     }
 
-    // 2. Lógica para mostrar e acionar o botão de Instalação (Android/Chrome)
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
+    // === LÓGICA DO BOTÃO DE INSTALAÇÃO (ANDROID/CHROME) ===
+    let promptInstalacao;
+    const btnInstall = document.getElementById('btn-install');
 
     window.addEventListener('beforeinstallprompt', (e) => {
+      // Previne o prompt padrão
       e.preventDefault();
-      deferredPrompt = e;
-      // Mostra o botão flutuante se o app ainda não estiver instalado
-      installBtn.style.display = 'block';
+      // Guarda o evento para disparar no clique do botão
+      promptInstalacao = e;
+      // Mostra o botão "Baixar Aplicativo"
+      btnInstall.style.display = 'block';
     });
 
-    installBtn.addEventListener('click', async () => {
-      if (deferredPrompt !== null) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
+    btnInstall.addEventListener('click', async () => {
+      if (promptInstalacao) {
+        promptInstalacao.prompt(); // Mostra o pop-up nativo de instalação
+        const { outcome } = await promptInstalacao.userChoice;
         if (outcome === 'accepted') {
-          console.log('App instalado!');
-          installBtn.style.display = 'none'; // Esconde o botão após instalar
+          btnInstall.style.display = 'none'; // Esconde se aceitar
         }
-        deferredPrompt = null;
+        promptInstalacao = null;
       }
     });
 
-    // Se o sistema detectar que o app já foi instalado, garante que o botão suma
-    window.addEventListener('appinstalled', () => {
-      installBtn.style.display = 'none';
-    });
+    // === LÓGICA PARA MOSTRAR DICA NO IPHONE (IOS) ===
+    const isIos = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(userAgent);
+    };
+    const isStandalone = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    // Se for iPhone e ainda NÃO estiver instalado, mostra a dica de texto
+    if (isIos() && !isStandalone()) {
+      document.getElementById('ios-instruction').style.display = 'block';
+    }
   </script>
 </body>
 </html>
