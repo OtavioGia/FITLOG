@@ -2,8 +2,8 @@
   "name": "FITLOG",
   "short_name": "FITLOG",
   "description": "Seu app de treino",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/FITLOG/index.html",
+  "scope": "/FITLOG/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
@@ -21,7 +21,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "lang": "pt-BR",
-  "prefer_related_applications": false
+  ]
 }
