@@ -22,7 +22,7 @@
       padding: 0;
       overflow: hidden;
     }
-    iframe {
+    #app-frame {
       position: fixed;
       top: 0;
       left: 0;
@@ -30,23 +30,118 @@
       height: 100%;
       border: none;
       display: block;
+      z-index: 1;
+    }
+    #install-prompt {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000000;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 30px;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      font-weight: bold;
+    }
+    #install-prompt:hover {
+      background: #333333;
     }
   </style>
 </head>
 <body>
+  <div id="install-prompt" onclick="installApp()">
+    📲 Instalar App FITLOG
+  </div>
+
   <iframe 
+    id="app-frame"
     src="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" 
     frameborder="0"
     allowfullscreen
     allow="clipboard-read; clipboard-write"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
   ></iframe>
 
   <script>
+    let deferredPrompt;
+    let isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                      window.navigator.standalone || 
+                      document.referrer.includes('android-app://');
+
+    // Verifica se já está em modo standalone
+    if (isStandalone) {
+      console.log('App já está instalado e rodando em modo standalone');
+    }
+
+    // Listener para o evento beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Só mostra o botão se não estiver em modo standalone
+      if (!isStandalone) {
+        document.getElementById('install-prompt').style.display = 'block';
+      }
+    });
+
+    // Função para instalar o app
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('Usuário aceitou instalar o app');
+            document.getElementById('install-prompt').style.display = 'none';
+          } else {
+            console.log('Usuário recusou instalar o app');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert('Opção de instalação não disponível no momento. Tente acessar pelas configurações do navegador.');
+      }
+    }
+
+    // Esconde o botão quando o app é instalado
+    window.addEventListener('appinstalled', (evt) => {
+      console.log('App foi instalado com sucesso!');
+      document.getElementById('install-prompt').style.display = 'none';
+      deferredPrompt = null;
+    });
+
+    // Previne redirecionamento do iframe
+    window.addEventListener('message', function(event) {
+      // Se precisar comunicar com o iframe
+      if (event.data === 'reload') {
+        document.getElementById('app-frame').src = document.getElementById('app-frame').src;
+      }
+    });
+
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
           .then(function(reg) {
             console.log('Service Worker registrado:', reg.scope);
+            
+            // Verifica se há atualização disponível
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('Nova versão disponível!');
+                  // Opcional: Mostrar botão de atualização
+                }
+              });
+            });
           })
           .catch(function(err) {
             console.log('Erro ao registrar Service Worker:', err);
