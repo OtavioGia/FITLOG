@@ -2,12 +2,13 @@
   "name": "FITLOG",
   "short_name": "FITLOG",
   "description": "Seu app de treino",
-  "start_url": "/FITLOG/index.html",
+  "start_url": "/FITLOG/",
   "scope": "/FITLOG/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "categories": ["fitness", "health"],
   "icons": [
     {
       "src": "https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png",
