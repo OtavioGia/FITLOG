@@ -15,133 +15,94 @@
   <link rel="manifest" href="/FITLOG/manifest.json">
   
   <style>
-    * { box-sizing: border-box; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
     body, html {
       height: 100%;
       width: 100%;
       margin: 0;
       padding: 0;
+      overflow: hidden;
       background-color: #000000;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
     }
-    .logo {
-      width: 180px;
-      height: 180px;
-      border-radius: 25px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(255,255,255,0.1);
-    }
-    h1 {
-      margin: 0 0 10px 0;
-      font-size: 28px;
-      letter-spacing: 2px;
-    }
-    p {
-      color: #aaaaaa;
-      margin-bottom: 40px;
-    }
-    .btn {
-      background-color: #ff3b30; /* Cor de destaque (pode mudar se quiser) */
-      color: white;
-      text-decoration: none;
-      padding: 16px 32px;
-      border-radius: 30px;
-      font-size: 18px;
-      font-weight: bold;
+    /* O Iframe ocupa toda a tela, dando a cara de App nativo */
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       border: none;
+      display: block;
+      z-index: 1;
+    }
+    /* Botão flutuante de instalação */
+    #installBtn {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #007aff;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      z-index: 9999; /* Fica por cima do iframe */
       cursor: pointer;
-      width: 80%;
-      max-width: 300px;
-      margin-bottom: 15px;
-      transition: transform 0.2s;
-    }
-    .btn:active {
-      transform: scale(0.95);
-    }
-    .btn-install {
-      background-color: #007aff; /* Azul para botão de instalar */
-      display: none; /* Fica oculto até o navegador permitir a instalação */
-    }
-    .ios-instruction {
-      display: none;
-      font-size: 14px;
-      color: #888;
-      width: 80%;
-      margin-top: 20px;
+      display: none; /* Escondido por padrão */
     }
   </style>
 </head>
 <body>
 
-  <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" alt="FITLOG Logo" class="logo">
-  <h1>FITLOG</h1>
-  <p>Seu app de treino</p>
+  <!-- Seu App rodando em tela cheia -->
+  <iframe 
+    src="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" 
+    allowfullscreen
+    allow="clipboard-read; clipboard-write">
+  </iframe>
 
-  <!-- Botão que redireciona para o Google Apps Script -->
-  <a href="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" class="btn">Entrar no App</a>
-
-  <!-- Botão de Instalação (aparece no Android/Chrome) -->
-  <button id="installBtn" class="btn btn-install">Instalar Aplicativo</button>
-
-  <!-- Instrução para iOS -->
-  <div id="iosInstruction" class="ios-instruction">
-    Para instalar no iPhone, toque em <b>Compartilhar</b> <svg width="15" height="15" viewBox="0 0 50 50" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M25 2L12 15h9v15h8V15h9L25 2zM12 35v8h26v-8h4v12H8V35h4z"/></svg> e depois em <b>"Adicionar à Tela de Início"</b>.
-  </div>
+  <!-- Botão de Instalar App (Flutuante) -->
+  <button id="installBtn">📲 Instalar App FITLOG</button>
 
   <script>
-    // 1. Registro do Service Worker
+    // 1. Registra o Service Worker (necessário para virar App)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
-          .then(function(reg) { console.log('SW registrado!', reg.scope); })
+          .then(function(reg) { console.log('SW registrado com sucesso!'); })
           .catch(function(err) { console.log('Erro no SW:', err); });
       });
     }
 
-    // 2. Lógica do Botão de Instalação (PWA)
+    // 2. Lógica para mostrar e acionar o botão de Instalação (Android/Chrome)
     let deferredPrompt;
     const installBtn = document.getElementById('installBtn');
-    const iosInstruction = document.getElementById('iosInstruction');
 
-    // Detecta se é iOS (iPhone/iPad) para mostrar instrução em texto, pois a Apple não suporta o botão.
-    const isIos = () => {
-      const userAgent = window.navigator.userAgent.toLowerCase();
-      return /iphone|ipad|ipod/.test(userAgent);
-    };
-    
-    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
-    if (isIos() && !isInStandaloneMode()) {
-      iosInstruction.style.display = 'block';
-    }
-
-    // Captura o evento do Chrome/Android que permite instalação
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); // Impede o prompt automático de aparecer na hora
-      deferredPrompt = e; // Guarda o evento
-      installBtn.style.display = 'block'; // Mostra o botão "Instalar Aplicativo"
+      e.preventDefault();
+      deferredPrompt = e;
+      // Mostra o botão flutuante se o app ainda não estiver instalado
+      installBtn.style.display = 'block';
     });
 
-    // Quando o usuário clica no botão "Instalar Aplicativo"
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt !== null) {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
-          console.log('Usuário aceitou a instalação');
+          console.log('App instalado!');
           installBtn.style.display = 'none'; // Esconde o botão após instalar
         }
         deferredPrompt = null;
       }
     });
 
-    // Esconde o botão se o app já foi instalado com sucesso
+    // Se o sistema detectar que o app já foi instalado, garante que o botão suma
     window.addEventListener('appinstalled', () => {
       installBtn.style.display = 'none';
     });
