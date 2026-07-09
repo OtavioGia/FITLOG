@@ -1,178 +1,425 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
   <title>FITLOG</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#000000">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FITLOG">
-  
   <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
   <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
   <link rel="manifest" href="/FITLOG/manifest.json">
-
   <style>
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    body, html {
+
+    html, body {
       height: 100%;
       width: 100%;
-      background-color: #000000;
-      color: #ffffff;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      background: #000000;
+      background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 40, 40, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 20, 20, 0.08) 0%, transparent 50%);
+      color: #fff;
+      position: relative;
     }
-    .container {
-      text-align: center;
-      padding: 20px;
+
+    /* Partículas de fundo animadas */
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(255, 60, 60, 0.4);
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
-      width: 100%;
-      max-width: 400px;
-    }
-    .logo {
-      width: 180px;
-      height: auto;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
-      animation: fadeInDown 1s ease;
-    }
-    .title {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      animation: fadeIn 1.5s ease;
-    }
-    .btn-open {
-      background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Verde fit moderno */
-      color: white;
-      border: none;
-      padding: 18px 40px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      width: 90%;
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      animation: fadeInUp 1s ease;
-    }
-    .btn-open:active {
-      transform: scale(0.95);
-    }
-    .btn-install {
-      background-color: transparent;
-      color: #aaaaaa;
-      border: 1px solid #555555;
-      padding: 12px 30px;
-      font-size: 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      display: none; /* Fica oculto até o navegador permitir instalação */
-      transition: all 0.3s;
-    }
-    .btn-install:active {
-      background-color: #333333;
-    }
-    .ios-instruction {
-      display: none;
-      font-size: 12px;
-      color: #888;
-      margin-top: 10px;
-      padding: 0 20px;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeInUp 1s ease-out;
     }
 
-    /* Animações */
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-container {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(255, 40, 40, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.3; }
+    }
+
+    .logo {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0 20px rgba(255, 50, 50, 0.4));
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .app-title {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+      background: linear-gradient(135deg, #ffffff 0%, #ff3c3c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    .app-subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    /* Botão principal */
+    .btn-open {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px 50px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, #ff1a1a 0%, #cc0000 100%);
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      text-decoration: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow:
+        0 4px 15px rgba(255, 30, 30, 0.4),
+        0 0 40px rgba(255, 30, 30, 0.1);
+      z-index: 1;
+    }
+
+    .btn-open::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s ease;
+      z-index: -1;
+    }
+
+    .btn-open:hover::before,
+    .btn-open:active::before {
+      left: 100%;
+    }
+
+    .btn-open:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow:
+        0 8px 30px rgba(255, 30, 30, 0.6),
+        0 0 60px rgba(255, 30, 30, 0.2);
+    }
+
+    .btn-open:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-open svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-open:hover svg {
+      transform: translateX(4px);
+    }
+
+    /* Botão de instalação PWA */
+    .btn-install {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 12px 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.8);
+      background: transparent;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    .btn-install.visible {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-install:hover {
+      border-color: rgba(255, 60, 60, 0.6);
+      color: #fff;
+      background: rgba(255, 60, 60, 0.1);
+    }
+
+    .btn-install svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Instrução iOS */
+    .ios-instructions {
+      display: none;
+      margin-top: 2rem;
+      padding: 1.2rem 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      max-width: 320px;
+      text-align: left;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    .ios-instructions.visible {
+      display: block;
+    }
+
+    .ios-instructions p {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .ios-instructions strong {
+      color: #fff;
+    }
+
+    .ios-instructions .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .ios-instructions .step-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 60, 60, 0.2);
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ff5555;
+      flex-shrink: 0;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 2rem;
+      z-index: 1;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.2);
+      letter-spacing: 2px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <img src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png" alt="FITLOG Logo" class="logo">
-    <div class="title">FITLOG</div>
-    
-    <!-- Botão que leva para o Google Script -->
-    <button class="btn-open" onclick="abrirApp()">ACESSAR TREINO</button>
+  <!-- Partículas de fundo -->
+  <div class="particles" id="particles"></div>
 
-    <!-- Botão de instalação para Android/Chrome -->
-    <button class="btn-install" id="btn-install">Baixar Aplicativo</button>
-    
-    <!-- Instrução para usuários de iPhone (Safari) -->
-    <div class="ios-instruction" id="ios-instruction">
-      Para instalar no iPhone: Toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.
+  <div class="content">
+    <div class="logo-container">
+      <div class="logo-glow"></div>
+      <img
+        class="logo"
+        src="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png"
+        alt="FITLOG Logo"
+      >
+    </div>
+
+    <h1 class="app-title">FITLOG</h1>
+    <p class="app-subtitle">Seu App de Treino</p>
+
+    <!-- Botão principal que abre o Script -->
+    <a
+      href="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec"
+      class="btn-open"
+      id="btnOpen"
+    >
+      <span>Abrir App</span>
+      <svg viewBox="0 0 24 24"><path d="M14 3l-1.4 1.4L17.2 9H2v2h15.2l-4.6 4.6L14 17l7-7z"/></svg>
+    </a>
+
+    <!-- Botão de instalação nativa (Chrome/Android) -->
+    <button class="btn-install" id="btnInstall">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      <span>Instalar App</span>
+    </button>
+
+    <!-- Instruções para iOS Safari -->
+    <div class="ios-instructions" id="iosInstructions">
+      <p><strong>Para instalar no iPhone:</strong></p>
+      <div class="step">
+        <span class="step-num">1</span>
+        <span>Toque no ícone <strong>Compartilhar</strong> ⬆️ na barra inferior</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span>Role e toque em <strong>"Adicionar à Tela de Início"</strong></span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span>Confirme tocando em <strong>"Adicionar"</strong></span>
+      </div>
     </div>
   </div>
 
+  <div class="footer">FLYSANTOS &copy; 2026</div>
+
   <script>
-    // Link do seu Google Apps Script
-    const APP_URL = "https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec";
+    // ============ PARTÍCULAS DE FUNDO ============
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (6 + Math.random() * 10) + 's';
+        p.style.animationDelay = (Math.random() * 8) + 's';
+        p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+        container.appendChild(p);
+      }
+    })();
 
-    function abrirApp() {
-      // Redireciona na mesma aba. Se o usuário estiver no PWA instalado, continuará parecendo um app.
-      window.location.href = APP_URL;
-    }
+    // ============ DETECTAR DISPOSITIVO ============
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
 
-    // === LÓGICA DO SERVICE WORKER (PWA) ===
+    // ============ SERVICE WORKER ============
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
-          .then(reg => console.log('Service Worker registrado:', reg.scope))
-          .catch(err => console.log('Erro ao registrar SW:', err));
+          .then(function(reg) { console.log('SW registrado:', reg.scope); })
+          .catch(function(err) { console.log('Erro SW:', err); });
       });
     }
 
-    // === LÓGICA DO BOTÃO DE INSTALAÇÃO (ANDROID/CHROME) ===
-    let promptInstalacao;
-    const btnInstall = document.getElementById('btn-install');
+    // ============ PWA INSTALL (Android / Chrome) ============
+    let deferredPrompt = null;
+    const btnInstall = document.getElementById('btnInstall');
+    const iosEl = document.getElementById('iosInstructions');
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      // Previne o prompt padrão
+    window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
-      // Guarda o evento para disparar no clique do botão
-      promptInstalacao = e;
-      // Mostra o botão "Baixar Aplicativo"
-      btnInstall.style.display = 'block';
+      deferredPrompt = e;
+      btnInstall.classList.add('visible');
     });
 
-    btnInstall.addEventListener('click', async () => {
-      if (promptInstalacao) {
-        promptInstalacao.prompt(); // Mostra o pop-up nativo de instalação
-        const { outcome } = await promptInstalacao.userChoice;
-        if (outcome === 'accepted') {
-          btnInstall.style.display = 'none'; // Esconde se aceitar
-        }
-        promptInstalacao = null;
+    btnInstall.addEventListener('click', async function() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('Install outcome:', outcome);
+      deferredPrompt = null;
+      btnInstall.classList.remove('visible');
+    });
+
+    // ============ MOSTRAR INSTRUÇÕES iOS ============
+    if (isIOS && !isStandalone) {
+      iosEl.classList.add('visible');
+    }
+
+    // ============ ABRIR LINK ============
+    document.getElementById('btnOpen').addEventListener('click', function(e) {
+      // Se estiver como app standalone, abre no próprio navegador
+      if (isStandalone) {
+        e.preventDefault();
+        window.open(this.href, '_blank');
       }
     });
 
-    // === LÓGICA PARA MOSTRAR DICA NO IPHONE (IOS) ===
-    const isIos = () => {
-      const userAgent = window.navigator.userAgent.toLowerCase();
-      return /iphone|ipad|ipod/.test(userAgent);
-    };
-    const isStandalone = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
-    // Se for iPhone e ainda NÃO estiver instalado, mostra a dica de texto
-    if (isIos() && !isStandalone()) {
-      document.getElementById('ios-instruction').style.display = 'block';
-    }
+    // Detectar se o app foi instalado depois
+    window.addEventListener('appinstalled', function() {
+      console.log('App instalado com sucesso!');
+      btnInstall.classList.remove('visible');
+    });
   </script>
 </body>
 </html>
