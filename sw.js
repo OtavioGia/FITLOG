@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitlog-v2';
+const CACHE_NAME = 'fitlog-v3';
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
@@ -26,6 +26,7 @@ self.addEventListener('fetch', function(event) {
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
+
   event.respondWith(
     fetch(event.request).catch(function() {
       return caches.match(event.request);
