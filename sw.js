@@ -1,67 +1,50 @@
-const CACHE_NAME = 'fitlog-v4';
-const urlsToCache = [
+const CACHE_NAME = 'fitlog-v5';
+
+// Recursos para cache offline
+const PRECACHE_URLS = [
   './',
   './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './manifest.json'
 ];
 
-// Instalação
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Cache aberto');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(PRECACHE_URLS))
       .then(() => self.skipWaiting())
   );
 });
 
-// Ativação
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Removendo cache antigo:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys().then(keys => Promise.all(
+      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+    )).then(() => self.clients.claim())
   );
 });
 
-// Fetch - Network first, fallback to cache
 self.addEventListener('fetch', event => {
+  // Não intercepta requisições para o Google Scripts
+  if (event.request.url.includes('script.google.com')) {
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Cache somente requisições GET do mesmo domínio
-        if (event.request.method === 'GET' && 
-            new URL(event.request.url).origin === self.location.origin) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request)
-          .then(cachedResponse => {
-            if (cachedResponse) {
-              return cachedResponse;
+    caches.match(event.request)
+      .then(cached => {
+        // Tenta rede primeiro, fallback para cache
+        return fetch(event.request)
+          .then(response => {
+            // Atualiza cache para próximas visitas
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseClone);
+              });
             }
-            // Se for página, retorna index.html
-            if (event.request.mode === 'navigate') {
-              return caches.match('./');
-            }
-            return new Response('Offline', { status: 503 });
-          });
+            return response;
+          })
+          .catch(() => cached || caches.match('./'));
       })
   );
 });
