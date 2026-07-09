@@ -1,50 +1,44 @@
-const CACHE_NAME = 'fitlog-v5';
-
-// Recursos para cache offline
-const PRECACHE_URLS = [
-  './',
-  './index.html',
-  './manifest.json'
+const CACHE_NAME = 'fitlog-v3';
+const URLS_TO_CACHE = [
+  '/FITLOG/',
+  '/FITLOG/index.html',
+  '/FITLOG/manifest.json'
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener('install', function(event) {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll(URLS_TO_CACHE);
+    })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', function(event) {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    )).then(() => self.clients.claim())
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(name) {
+          if (name !== CACHE_NAME) {
+            return caches.delete(name);
+          }
+        })
+      );
+    })
   );
+  self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-  // Não intercepta requisições para o Google Scripts
-  if (event.request.url.includes('script.google.com')) {
+self.addEventListener('fetch', function(event) {
+  // Deixa requisições do Google Apps Script passarem direto pela internet
+  if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
 
+  // Tenta buscar na rede, se falhar ou estiver offline, pega do cache
   event.respondWith(
-    caches.match(event.request)
-      .then(cached => {
-        // Tenta rede primeiro, fallback para cache
-        return fetch(event.request)
-          .then(response => {
-            // Atualiza cache para próximas visitas
-            if (response.status === 200) {
-              const responseClone = response.clone();
-              caches.open(CACHE_NAME).then(cache => {
-                cache.put(event.request, responseClone);
-              });
-            }
-            return response;
-          })
-          .catch(() => cached || caches.match('./'));
-      })
+    fetch(event.request).catch(function() {
+      return caches.match(event.request);
+    })
   );
 });
