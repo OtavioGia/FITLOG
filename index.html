@@ -2,152 +2,343 @@
 <html>
 <head>
   <title>FITLOG</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#000000">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FITLOG">
-  <link rel="icon" type="image/png" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
-  <link rel="apple-touch-icon" href="https://flysantos.com/wp-content/uploads/2026/03/LOGO_FITLOG-2.png">
-  <link rel="manifest" href="/FITLOG/manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="manifest" href="manifest.json">
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    body, html {
-      height: 100%;
-      width: 100%;
+    * {
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      box-sizing: border-box;
     }
-    #app-frame {
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000000;
+      color: white;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 30px;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+    }
+    
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #fff, #ccc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    p {
+      color: #999;
+      margin-bottom: 40px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      margin-bottom: 15px;
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-primary:active {
+      transform: scale(0.98);
+      background: #cccccc;
+    }
+    
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      margin-bottom: 15px;
+      background: transparent;
+      color: #ffffff;
+      border: 2px solid #333333;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-secondary:active {
+      background: #1a1a1a;
+      border-color: #ffffff;
+    }
+    
+    .install-banner {
+      display: none;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      z-index: 1;
-    }
-    #install-prompt {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #000000;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 30px;
+      right: 0;
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      padding: 15px 20px;
       z-index: 1000;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      text-align: center;
-      cursor: pointer;
-      border: 2px solid #ffffff;
-      font-weight: bold;
+      border-bottom: 1px solid #333;
+      animation: slideDown 0.3s ease-out;
     }
-    #install-prompt:hover {
-      background: #333333;
+    
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+    
+    .install-banner-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    
+    .install-text {
+      flex: 1;
+      font-size: 14px;
+    }
+    
+    .install-text strong {
+      display: block;
+      font-size: 16px;
+    }
+    
+    .btn-install {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .btn-close {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ffffff, #cccccc, #ffffff);
+      background-size: 200% 100%;
+      animation: loading 2s linear infinite;
+      display: none;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
   </style>
 </head>
 <body>
-  <div id="install-prompt" onclick="installApp()">
-    📲 Instalar App FITLOG
+  <div class="status-bar" id="statusBar"></div>
+  
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-content">
+      <div class="install-text">
+        <strong>Adicione à tela inicial</strong>
+        Acesso rápido ao FITLOG
+      </div>
+      <button class="btn-install" onclick="installApp()">Instalar</button>
+      <button class="btn-close" onclick="closeBanner()">×</button>
+    </div>
   </div>
 
-  <iframe 
-    id="app-frame"
-    src="https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec" 
-    frameborder="0"
-    allowfullscreen
-    allow="clipboard-read; clipboard-write"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-  ></iframe>
+  <div class="container">
+    <img src="icon-512.png" alt="FITLOG" class="logo" 
+         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>'">
+    
+    <h1>FITLOG</h1>
+    <p>Seu aplicativo de treino<br>Rápido, simples e eficiente</p>
+    
+    <button class="btn-primary" onclick="openApp()" id="openAppBtn">
+      <span class="loading" style="display:none;" id="loadingIcon"></span>
+      ABRIR APLICATIVO
+    </button>
+    
+    <button class="btn-secondary" onclick="installApp()">
+      📲 INSTALAR APP
+    </button>
+    
+    <p style="margin-top: 30px; font-size: 12px; color: #666;">
+      Versão 2.0 • PWA Ready
+    </p>
+  </div>
 
   <script>
     let deferredPrompt;
-    let isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                      window.navigator.standalone || 
-                      document.referrer.includes('android-app://');
+    
+    // Detecta se está em modo standalone
+    const isStandalone = () => {
+      return window.matchMedia('(display-mode: standalone)').matches || 
+             window.navigator.standalone || 
+             document.referrer.includes('android-app://');
+    };
 
-    // Verifica se já está em modo standalone
-    if (isStandalone) {
-      console.log('App já está instalado e rodando em modo standalone');
+    // Abre o Google Apps Script em nova janela (solução sem iframe)
+    function openApp() {
+      const btn = document.getElementById('openAppBtn');
+      const loading = document.getElementById('loadingIcon');
+      const statusBar = document.getElementById('statusBar');
+      
+      btn.disabled = true;
+      loading.style.display = 'inline-block';
+      statusBar.style.display = 'block';
+      
+      // Abre em nova aba/janela
+      window.open(
+        'https://script.google.com/macros/s/AKfycbxHhYBvJD3vbHfu8yHQB92mQXYhwYjwVG1JigHfm1D5mGLjpTFKhGegx5NsBxHgIcUU/exec',
+        '_blank',
+        'width=' + screen.width + ',height=' + screen.height
+      );
+      
+      // Restaura o botão após 2 segundos
+      setTimeout(() => {
+        btn.disabled = false;
+        loading.style.display = 'none';
+        statusBar.style.display = 'none';
+      }, 2000);
     }
 
-    // Listener para o evento beforeinstallprompt
+    // Gerencia instalação do PWA
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       
-      // Só mostra o botão se não estiver em modo standalone
-      if (!isStandalone) {
-        document.getElementById('install-prompt').style.display = 'block';
-      }
+      // Mostra banner após 3 segundos
+      setTimeout(() => {
+        if (!isStandalone()) {
+          document.getElementById('installBanner').style.display = 'block';
+        }
+      }, 3000);
     });
 
-    // Função para instalar o app
     function installApp() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
-            console.log('Usuário aceitou instalar o app');
-            document.getElementById('install-prompt').style.display = 'none';
-          } else {
-            console.log('Usuário recusou instalar o app');
+            console.log('Usuário instalou o app');
           }
           deferredPrompt = null;
+          closeBanner();
         });
       } else {
-        alert('Opção de instalação não disponível no momento. Tente acessar pelas configurações do navegador.');
+        // Fallback para iOS ou navegadores sem suporte
+        alert('Para instalar:\n\n' +
+              'iPhone/iPad: Toque no ícone Compartilhar e depois "Adicionar à Tela de Início"\n\n' +
+              'Android: Toque nos 3 pontos do navegador e "Adicionar à tela inicial"');
       }
     }
 
-    // Esconde o botão quando o app é instalado
-    window.addEventListener('appinstalled', (evt) => {
-      console.log('App foi instalado com sucesso!');
-      document.getElementById('install-prompt').style.display = 'none';
-      deferredPrompt = null;
+    function closeBanner() {
+      document.getElementById('installBanner').style.display = 'none';
+    }
+
+    // Auto-abre se estiver em modo standalone
+    if (isStandalone()) {
+      openApp();
+    }
+
+    // Evento quando app é instalado
+    window.addEventListener('appinstalled', () => {
+      closeBanner();
+      console.log('App instalado com sucesso');
     });
 
-    // Previne redirecionamento do iframe
-    window.addEventListener('message', function(event) {
-      // Se precisar comunicar com o iframe
-      if (event.data === 'reload') {
-        document.getElementById('app-frame').src = document.getElementById('app-frame').src;
-      }
-    });
-
-    // Service Worker Registration
+    // Registra Service Worker
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/FITLOG/sw.js', { scope: '/FITLOG/' })
-          .then(function(reg) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => {
             console.log('Service Worker registrado:', reg.scope);
             
-            // Verifica se há atualização disponível
+            // Verifica atualizações
             reg.addEventListener('updatefound', () => {
               const newWorker = reg.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('Nova versão disponível!');
-                  // Opcional: Mostrar botão de atualização
+                  console.log('Nova versão disponível! Recarregue para atualizar.');
                 }
               });
             });
           })
-          .catch(function(err) {
-            console.log('Erro ao registrar Service Worker:', err);
-          });
+          .catch(err => console.log('Erro SW:', err));
       });
     }
+
+    // Previne zoom em iOS
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    document.addEventListener('gesturechange', (e) => e.preventDefault());
+    document.addEventListener('gestureend', (e) => e.preventDefault());
   </script>
 </body>
 </html>
