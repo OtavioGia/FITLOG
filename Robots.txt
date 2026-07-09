@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /FITLOG/
+Disallow: /FITLOG/sw.js
