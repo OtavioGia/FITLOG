@@ -1,0 +1,23 @@
+# Força HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/FITLOG/$1 [R=301,L]
+
+# Headers para PWA
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Cache control para service worker
+    <FilesMatch "sw\.js$">
+        Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+    </FilesMatch>
+    
+    # Cache para recursos estáticos
+    <FilesMatch "\.(html|json)$">
+        Header set Cache-Control "max-age=0, no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
